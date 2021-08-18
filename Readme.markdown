@@ -44,3 +44,38 @@ A simple, progress bar for Common Lisp like tqdm!
 ```
 
 ## Exports
+```(init-progress-bar var desc total)```
+Initialize the ProgressBar Structure and assign it to var.
+
+desc: description of progress bar
+
+total: max of the iteration
+
+```(update status count)```
+update the status, and display the new progress bar.
+
+status: The structure to be updated as defined by the above macro
+
+count: fixnum
+
+```(discard-all-progress-bar)```
+Abandon all lists of the progress bar 
+
+```*progress-bar-ascii*```
+You can set the character string as you want to be displayed as the meter. For example...
+
+```(setq *progress-bar-ascii* "#")```
+
+```*blank*```
+
+exa.
+
+```(setq *blank* " ")```
+
+```*progress-bar-enabled*```
+when `*progress-bar-enabled*` equals nil, no new line will be created.
+
+
+```with-progress-bar```
+
+Please see examples.
