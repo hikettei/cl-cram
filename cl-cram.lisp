@@ -7,6 +7,7 @@
 
 (defparameter *indent* 0)
 (defparameter *number-of-bar* 0)
+(defparameter *diff* 0)
 
 (defparameter *progress-bar* "█")
 (defparameter *blank* "_")
@@ -16,19 +17,25 @@
   (count 0)
   (time)
   (desc)
-  (line-pointer))
+  (nth-bar))
 
-(defmacro backward-lines (n stream)
-  `(progn (dotimes (_ ,n) (write-char #\Return ,stream))
+(defmacro pprinc (object)
+  `(progn (incf *diff* 1)
+	  (princ ,object)))
+
+(defmacro backward-lines (status stream)
+  `(progn (dotimes (_ (progress-bar-status-nth-bar ,status))
+	    (write-char #\Return ,stream))
 	  (write-char #\Rubout ,stream)))
 
 (defmacro init-progress-bar (var desc total)
   `(progn
      (incf *number-of-bar* 1)
-     (setq *indent* (max (length ,desc) *indent*))
      (setq ,var (make-progress-bar-status :total ,total
 					  :desc ,desc
-				  	  :time 0))))
+				  	  :time 0
+					  :nth-bar *number-of-bar*))
+     (setq *indent* (max (length ,desc) *indent*))))
 
 (defmacro progress-percent (status)
   `(fround (* 100 (/ (progress-bar-status-count ,status) (progress-bar-status-total ,status)))))
@@ -39,7 +46,7 @@
 
 (defun render (status)
   (with-output-to-string (bar)
-    (backward-lines *number-of-bar* bar)
+    (backward-lines status bar)
     (let* ((desc (progress-bar-status-desc status))
 	   (spl (- *indent* (length desc) -1)))
       (write-string desc bar)
@@ -51,3 +58,4 @@
       (dotimes (_ (- 10 n)) (write-string *blank* bar)))
     (write-string "|" bar)))
 
+  
