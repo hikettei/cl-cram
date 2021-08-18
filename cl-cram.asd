@@ -1,7 +1,10 @@
 
+(in-package #:cl-user)
+
 (asdf:defsystem :cl-cram
-  :version "0.0.0"
-  :description "Progress bar for Common Lisp"
+  :name "cl-cram"
+  :description "A simple, Progress bar for Common Lisp"
   :author "hikettei"
   :license "MIT"
+  :serial t
   :components ((:file "cl-cram")))
