@@ -13,9 +13,9 @@ A simple, progress bar for Common Lisp like tqdm!
 (load "cl-cram.lisp")
 (use-package :cl-cram)
 
-(setq x nil)
-(setq y nil)
-(setq z nil)
+(defparameter x nil)
+(defparameter y nil)
+(defparameter z nil)
 
 ; You can line up several progress bars.
 (init-progress-bar x "Loop1" 100000) ; register a new progress-bar.
