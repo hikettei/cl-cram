@@ -4,6 +4,8 @@
   (:export
    #:init-progress-bar
    #:update
+   #:with-progress-bar
+   #:discard-all-progress-bar
    #:*progress-bar-enabled*))
 
 (in-package :cl-cram)
@@ -25,9 +27,8 @@
   (nth-bar))
 
 (defun backward-lines ()
-  (dotimes (_ (length *all-of-progress-bars*))
-    (write-char #\Return)
-    (write-char #\Rubout)))
+  (write-char #\Return)
+  (write-char #\Rubout))
 
 (defmacro init-progress-bar (var desc total)
   `(progn
@@ -41,7 +42,9 @@
 					       (list ,var)))
      ,var))
 
-(defmacro discard-all-progress-bar () `(defparameter *all-of-progress-bars* nil) t)
+(defmacro discard-all-progress-bar ()
+  (defparameter *all-of-progress-bars* nil)
+  (defparameter *number-of-bar* 0))
 
 (defmacro progress-percent (status)
   `(fround (* 100 (/ (progress-bar-status-count ,status) (progress-bar-status-total ,status)))))
@@ -59,7 +62,7 @@
       (write-string desc bar)
       (dotimes (_ spl) (write-string " " bar))
       (write-string ":" bar))
-    (let* ((n (round (fround (progress-percent status))))
+    (let* ((n (round (progress-percent status)))
 	   (r (round (if (>= (/ n 10) 10) 10 (/ n 10)))))
       (if (< n 100)
 	  (write-string " " bar))
@@ -76,3 +79,10 @@
 	   (dif (- now-time (progress-bar-status-start-time status))))
       (write-string (write-to-string dif) bar)
       (write-string "s] " bar))))
+
+(defmacro with-progress-bar (var desc total &body body)
+  `(progn
+     (init-progress-bar ,var ,desc ,total)
+     ,@body
+     (discard-all-progress-bar)))
+
