@@ -21,6 +21,7 @@
   (total)
   (count 0)
   (desc)
+  (start-time)
   (nth-bar))
 
 (defun backward-lines ()
@@ -32,6 +33,7 @@
   `(progn
      (setq ,var (make-progress-bar-status :total ,total
 					  :desc ,desc
+					  :start-time (get-universal-time)
 					  :nth-bar *number-of-bar*))
      (incf *number-of-bar* 1)
      (setq *indent* (max (length ,desc) *indent*))
@@ -59,13 +61,18 @@
       (write-string ":" bar))
     (let* ((n (round (fround (progress-percent status))))
 	   (r (round (if (>= (/ n 10) 10) 10 (/ n 10)))))
+      (if (<= n 100)
+	  (write-string "_" bar))
       (write-string (write-to-string n) bar)
       (write-string "% |" bar)
       (dotimes (_ r) (write-string *progress-bar* bar))
       (dotimes (_ (- 10 r)) (write-string *blank* bar)))
-    (write-string "|[" bar)
+    (write-string "| " bar)
     (write-string (write-to-string (progress-bar-status-count status)) bar)
     (write-string "/" bar)
     (write-string (write-to-string (progress-bar-status-total status)) bar)
-    (write-string "] " bar)))
-
+    (write-string " [" bar)
+    (let* ((now-time (get-universal-time))
+	   (dif (- now-time (progress-bar-status-start-time status))))
+      (write-string (write-to-string dif) bar)
+      (write-string "s] " bar))))
