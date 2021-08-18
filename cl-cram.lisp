@@ -6,6 +6,8 @@
    #:update
    #:with-progress-bar
    #:discard-all-progress-bar
+   #:*progress-bar-ascii*
+   #:*blank*
    #:*progress-bar-enabled*))
 
 (in-package :cl-cram)
@@ -16,7 +18,7 @@
 (defparameter *progress-bar-enabled* t)
 (defparameter *all-of-progress-bars* nil)
 
-(defparameter *progress-bar* "█")
+(defparameter *progress-bar-ascii* "█")
 (defparameter *blank* "_")
 
 (defstruct progress-bar-status
@@ -68,7 +70,7 @@
 	  (write-string " " bar))
       (write-string (write-to-string n) bar)
       (write-string "% |" bar)
-      (dotimes (_ r) (write-string *progress-bar* bar))
+      (dotimes (_ r) (write-string *progress-bar-ascii* bar))
       (dotimes (_ (- 10 r)) (write-string *blank* bar)))
     (write-string "| " bar)
     (write-string (write-to-string (progress-bar-status-count status)) bar)
