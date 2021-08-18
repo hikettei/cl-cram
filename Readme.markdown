@@ -87,5 +87,5 @@ Please refer to examples.
 (pdolist (i `(1 2 3 4 5))
     (sleep 0.1))
     
-(pmap 'list #'(lambda (x) (sleep 0.1) x) `(1 2 3 4 5)
+(pmap 'list #'(lambda (x) (sleep 0.1) x) `(1 2 3 4 5))
 ```
