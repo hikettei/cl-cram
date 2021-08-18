@@ -28,6 +28,7 @@
   (total nil      :type fixnum)
   (count 0        :type fixnum)
   (desc "PROG"    :type string)
+  (desc-len nil   :type fixnum)
   (start-time nil :type fixnum)
   (nth-bar nil    :type fixnum))
 
@@ -39,6 +40,7 @@
   `(progn
      (setq ,var (make-progress-bar-status :total ,total
 					  :desc ,desc
+					  :desc-len (length ,desc)
 					  :start-time (get-universal-time)
 					  :nth-bar *number-of-bar*))
      (incf *number-of-bar* 1)
@@ -60,15 +62,15 @@
   (incf (pbar-count status) count)
   (backward-lines)
   (dolist (i *all-of-progress-bars*)
-    (format t (render i))) nil)
+    (format t (render i)))
+  nil)
 
 (declaim (ftype (function (progress-bar-status) string) render))
 (defun render (status)
   (declare (optimize (speed 3) (safety 0) (debug 0)))
   (with-output-to-string (bar)
-    (let* ((desc (pbar-desc status))
-	   (spl (- *indent* (length desc) -1)))
-      (write-string desc bar)
+    (let ((spl (- *indent* (pbar-desc-len status) -1)))
+      (write-string (pbar-desc status) bar)
       (dotimes (_ spl) (write-string " " bar))
       (write-string ":" bar))
     (let* ((n (round (progress-percent status)))
