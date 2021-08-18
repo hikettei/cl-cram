@@ -12,6 +12,8 @@
 
 (in-package :cl-cram)
 
+(declaim (inline backward-lines))
+
 (defparameter *indent* 0)
 (defparameter *number-of-bar* 0)
 
@@ -21,12 +23,13 @@
 (defparameter *progress-bar-ascii* "█")
 (defparameter *blank* "_")
 
-(defstruct progress-bar-status
-  (total)
-  (count 0)
-  (desc)
-  (start-time)
-  (nth-bar))
+(defstruct (progress-bar-status (:conc-name pbar-)
+				(:predicate progress-bar))
+  (total nil      :type fixnum)
+  (count 0        :type fixnum)
+  (desc "PROG"    :type string)
+  (start-time nil :type fixnum)
+  (nth-bar nil    :type fixnum))
 
 (defun backward-lines ()
   (write-char #\Return)
@@ -49,17 +52,21 @@
   (defparameter *number-of-bar* 0))
 
 (defmacro progress-percent (status)
-  `(fround (* 100 (/ (progress-bar-status-count ,status) (progress-bar-status-total ,status)))))
+  `(fround (* 100 (/ (pbar-count ,status) (pbar-total ,status)))))
 
+(declaim (ftype (function (progress-bar-status fixnum)) update))
 (defun update (status count)
-  (incf (progress-bar-status-count status) count)
+  (declare (optimize (speed 3) (safety 0) (debug 0)))
+  (incf (pbar-count status) count)
   (backward-lines)
   (dolist (i *all-of-progress-bars*)
-    (format t (render i))))
+    (format t (render i))) nil)
 
+(declaim (ftype (function (progress-bar-status) string) render))
 (defun render (status)
+  (declare (optimize (speed 3) (safety 0) (debug 0)))
   (with-output-to-string (bar)
-    (let* ((desc (progress-bar-status-desc status))
+    (let* ((desc (pbar-desc status))
 	   (spl (- *indent* (length desc) -1)))
       (write-string desc bar)
       (dotimes (_ spl) (write-string " " bar))
@@ -73,12 +80,12 @@
       (dotimes (_ r) (write-string *progress-bar-ascii* bar))
       (dotimes (_ (- 10 r)) (write-string *blank* bar)))
     (write-string "| " bar)
-    (write-string (write-to-string (progress-bar-status-count status)) bar)
+    (write-string (write-to-string (pbar-count status)) bar)
     (write-string "/" bar)
-    (write-string (write-to-string (progress-bar-status-total status)) bar)
+    (write-string (write-to-string (pbar-total status)) bar)
     (write-string " [" bar)
     (let* ((now-time (get-universal-time))
-	   (dif (- now-time (progress-bar-status-start-time status))))
+	   (dif (- now-time (pbar-start-time status))))
       (write-string (write-to-string dif) bar)
       (write-string "s] " bar))))
 
