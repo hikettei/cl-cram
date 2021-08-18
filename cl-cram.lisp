@@ -2,6 +2,9 @@
 (defpackage :cl-cram
   (:use :cl)
   (:export
+   #:pdotimes
+   #:pdolist
+   #:pmap
    #:init-progress-bar
    #:update
    #:with-progress-bar
@@ -96,4 +99,35 @@
      (init-progress-bar ,var ,desc ,total)
      ,@body
      (discard-all-progress-bar)))
+
+
+(defmacro pdotimes ((var count) &body body)
+  `(let ((bar nil))
+     (init-progress-bar bar "pdotimes" ,count)
+     (let ((r (dotimes (,var ,count)
+		(update bar 1)
+		,@body)))
+       (princ #\newline)
+       (discard-all-progress-bar)
+       r)))
+
+(defmacro pdolist ((var list) &body body)
+  `(let ((bar nil))
+     (init-progress-bar bar "pdolist" (length ,list))
+     (let ((r (dolist (,var ,list)
+		(update bar 1)
+		,@body)))
+       (princ #\newline)
+       (discard-all-progress-bar)
+       r)))
+
+(defmacro pmap (result-type function first-sequence)
+  `(let ((bar nil))
+     (init-progress-bar bar "pmap" (length ,first-sequence))
+     (let ((result (map ,result-type #'(lambda (x) (update bar 1)
+					 (funcall ,function x))
+			,first-sequence)))
+       (princ #\newline)
+       (discard-all-progress-bar)
+       result)))
 
