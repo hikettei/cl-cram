@@ -1,5 +1,5 @@
 
-# cl-cram
+# :cl-cram
 A simple, progress bar for Common Lisp like tqdm!
 
 ![demo](https://gyazo.com/3569d8645bcad63e139b380955d9bd37/raw)
