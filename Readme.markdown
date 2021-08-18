@@ -67,9 +67,7 @@ You can set the character string as you want to be displayed as the meter. For e
 ```(setq *progress-bar-ascii* "#")```
 
 ```*blank*```
-
-exa.
-
+example -> 
 ```(setq *blank* " ")```
 
 ```*progress-bar-enabled*```
