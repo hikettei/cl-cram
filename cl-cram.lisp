@@ -1,13 +1,18 @@
 
 (defpackage :cl-cram
   (:use :cl)
-  (:export nil))
+  (:export
+   #:init-progress-bar
+   #:update
+   #:*progress-bar-enabled*))
 
 (in-package :cl-cram)
 
 (defparameter *indent* 0)
 (defparameter *number-of-bar* 0)
-(defparameter *diff* 0)
+
+(defparameter *progress-bar-enabled* t)
+(defparameter *all-of-progress-bars* nil)
 
 (defparameter *progress-bar* "█")
 (defparameter *blank* "_")
@@ -19,43 +24,46 @@
   (desc)
   (nth-bar))
 
-(defmacro pprinc (object)
-  `(progn (incf *diff* 1)
-	  (princ ,object)))
-
-(defmacro backward-lines (status stream)
-  `(progn (dotimes (_ (progress-bar-status-nth-bar ,status))
-	    (write-char #\Return ,stream))
-	  (write-char #\Rubout ,stream)))
+(defun backward-lines ()
+  (dotimes (_ (length *all-of-progress-bars*))
+    (write-char #\Return)
+    (write-char #\Rubout)))
 
 (defmacro init-progress-bar (var desc total)
   `(progn
-     (incf *number-of-bar* 1)
      (setq ,var (make-progress-bar-status :total ,total
 					  :desc ,desc
 				  	  :time 0
 					  :nth-bar *number-of-bar*))
-     (setq *indent* (max (length ,desc) *indent*))))
+     (incf *number-of-bar* 1)
+     (setq *indent* (max (length ,desc) *indent*))
+     (setq *all-of-progress-bars* (concatenate 'list *all-of-progress-bars*
+					       (list ,var)))
+     ,var))
+
+(defmacro discard-all-progress-bar () `(defparameter *all-of-progress-bars* nil) t)
 
 (defmacro progress-percent (status)
   `(fround (* 100 (/ (progress-bar-status-count ,status) (progress-bar-status-total ,status)))))
 
 (defun update (status count)
   (incf (progress-bar-status-count status) count)
-  (format t (render status)))
+  (backward-lines)
+  (dolist (i *all-of-progress-bars*)
+    (format t (render i))))
 
 (defun render (status)
   (with-output-to-string (bar)
-    (backward-lines status bar)
     (let* ((desc (progress-bar-status-desc status))
 	   (spl (- *indent* (length desc) -1)))
       (write-string desc bar)
       (dotimes (_ spl) (write-string " " bar))
       (write-string ":" bar))
     (write-string "|" bar)
-    (let ((n (/ (round (fround (progress-percent status))) 10)))
+    (let* ((n (/ (round (fround (progress-percent status))) 10))
+	   (n (if (>= n 10) 10 n)))
       (dotimes (_ n) (write-string *progress-bar* bar))
       (dotimes (_ (- 10 n)) (write-string *blank* bar)))
     (write-string "|" bar)))
 
-  
+
