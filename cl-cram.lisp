@@ -59,11 +59,15 @@
       (write-string desc bar)
       (dotimes (_ spl) (write-string " " bar))
       (write-string ":" bar))
-    (write-string "|" bar)
     (let* ((n (/ (round (fround (progress-percent status))) 10))
 	   (n (if (>= n 10) 10 n)))
+      (write-string (write-to-string n) bar)
+      (write-string "% |" bar)
       (dotimes (_ n) (write-string *progress-bar* bar))
       (dotimes (_ (- 10 n)) (write-string *blank* bar)))
-    (write-string "|" bar)))
-
+    (write-string "|[" bar)
+    (write-string (write-to-string (progress-bar-status-count status)) bar)
+    (write-string "/" bar)
+    (write-string (write-to-string (progress-bar-status-total status)) bar)
+    (write-string "] " bar)))
 
