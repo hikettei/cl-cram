@@ -17,6 +17,7 @@ A simple, progress bar for Common Lisp like tqdm!
 (setq y nil)
 (setq z nil)
 
+; You can line up several progress bars.
 (init-progress-bar x "Loop1" 100000) ; register a new progress-bar.
 (init-progress-bar y "Loop2" 100000)
 (init-progress-bar z "Loop3" 100000)
