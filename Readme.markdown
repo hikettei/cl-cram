@@ -78,4 +78,4 @@ when `*progress-bar-enabled*` equals nil, no new line will be created.
 
 ```with-progress-bar```
 
-Please see examples.
+Please refer to examples.
