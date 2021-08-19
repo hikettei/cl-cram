@@ -1,20 +1,19 @@
 
 (load "cl-cram.lisp")
 
-(sb-profile:profile "CL-CRAM")
 (use-package :cl-cram)
 
 (defparameter x nil)
 (defparameter y nil)
 (defparameter z nil)
 
-(init-progress-bar x "Loop1" 9000000)
-(init-progress-bar y "Loop2" 9000000)
-(init-progress-bar z "Loop3" 9000000)
+(init-progress-bar x "Loop1" 100000)
+(init-progress-bar y "Loop2" 100000)
+(init-progress-bar z "Loop3" 100000)
 
 (fresh-line)
 
-(dotimes (_ 900000)
+(dotimes (_ 100000)
   (update x 1)
   (update y 1)
   (update z 1))
@@ -25,11 +24,9 @@
 
 (sleep 1)
 
-(with-progress-bar x "Loop1" 9000000
-  (dotimes (i 9000000)
+(with-progress-bar x "Loop1" 900000
+  (dotimes (i 900000)
     (update x 1)))
 
 (fresh-line)
-
-(sb-profile:report)
 
