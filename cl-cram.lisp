@@ -63,7 +63,9 @@
 (defun update (status count)
   (declare (optimize (speed 3) (safety 0) (debug 0)))
   (incf (pbar-count status) count)
-  (backward-lines)
+  (if *progress-bar-enabled*
+      (backward-lines))
+  (fresh-line)
   (dolist (i *all-of-progress-bars*)
     (format t (render i)))
   nil)
