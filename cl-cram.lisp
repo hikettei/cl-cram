@@ -65,7 +65,6 @@
   (incf (pbar-count status) count)
   (if *progress-bar-enabled*
       (backward-lines))
-  (fresh-line)
   (dolist (i *all-of-progress-bars*)
     (format t (render i)))
   nil)
