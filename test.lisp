@@ -3,17 +3,13 @@
 
 (use-package :cl-cram)
 
-(defparameter x nil)
-(defparameter y nil)
-(defparameter z nil)
-
-(init-progress-bar x "Loop1" 100000)
-(init-progress-bar y "Loop2" 100000)
-(init-progress-bar z "Loop3" 100000)
+(init-progress-bar x "Loop1" 10000)
+(init-progress-bar y "Loop2" 10000)
+(init-progress-bar z "Loop3" 10000)
 
 (fresh-line)
 
-(dotimes (_ 100000)
+(dotimes (_ 10000)
   (update x 1)
   (update y 1)
   (update z 1))
@@ -24,8 +20,8 @@
 
 (sleep 1)
 
-(with-progress-bar x "Loop1" 900000
-  (dotimes (i 900000)
+(with-progress-bar x "Loop1" 10000
+  (dotimes (i 10000)
     (update x 1)))
 
 (fresh-line)
