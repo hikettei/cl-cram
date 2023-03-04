@@ -4,6 +4,12 @@ A simple, progress bar for Common Lisp like tqdm!
 
 ![demo](https://gyazo.com/3569d8645bcad63e139b380955d9bd37/raw)
 
+## News
+
+- (2023/03/5) Here's my reimplementation of cl-cram at [cl-tqdm](https://github.com/hikettei/cl-tqdm).
+
+cl-tqdm is **Not** yet registered in Quicklisp but it is recommended to use the new one. (cl-cram is registered)
+
 ## Usage
 
 ```lisp
